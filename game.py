@@ -13,13 +13,29 @@ def genera_database_casi():
             "sospettati": {
                 "Marco": {
                     "ruolo": "Custode notturno",
-                    "alibi": "Stava facendo la ronda nel lato opposto dell'edificio.",
-                    "motivo_apparente": "Ha molti debiti di gioco."
+                    "dialoghi": {
+                        "1": {
+                            "domanda": "Dov'eri tra le 02:00 e le 04:00?",
+                            "risposta": "Stavo facendo la ronda nel lato opposto dell'edificio. È una struttura enorme, non ho sentito rumori di vetri rotti."
+                        },
+                        "2": {
+                            "domanda": "Sappiamo che hai molti debiti di gioco...",
+                            "risposta": "(Suda) Non sono affari vostri. E comunque sto ripagando tutto, non ruberei mai un'opera d'arte per questo."
+                        }
+                    }
                 },
                 "Giulia": {
                     "ruolo": "Restauratrice",
-                    "alibi": "Era a casa a dormire da sola.",
-                    "motivo_apparente": "Voleva sostituire l'originale con una sua copia perfetta per venderlo."
+                    "dialoghi": {
+                        "1": {
+                            "domanda": "Dov'eri stanotte?",
+                            "risposta": "Ero a casa a dormire. Vivo da sola, quindi dovrete fidarvi della mia parola."
+                        },
+                        "2": {
+                            "domanda": "Hai accesso agli attrezzi di restauro?",
+                            "risposta": "Certo, è il mio lavoro. Ma tengo sempre la mia cassetta degli attrezzi chiusa a chiave nel magazzino."
+                        }
+                    }
                 }
             },
             "prove": {
@@ -49,13 +65,29 @@ def genera_database_casi():
             "sospettati": {
                 "Luca": {
                     "ruolo": "Pilota rivale",
-                    "alibi": "Era nel suo box a prepararsi per la gara.",
-                    "motivo_apparente": "Voleva assicurarsi la vittoria del campionato."
+                    "dialoghi": {
+                        "1": {
+                            "domanda": "Dov'eri poco prima delle qualifiche?",
+                            "risposta": "Ero nel mio box a concentrarmi. Mi stavo già preparando per scendere in pista."
+                        },
+                        "2": {
+                            "domanda": "Volevi disperatamente vincere questo campionato, vero?",
+                            "risposta": "Voglio vincere pulito in pista, non distruggendo la moto di un avversario ai box!"
+                        }
+                    }
                 },
                 "Anna": {
-                    "ruolo": "Meccanico",
-                    "alibi": "Stava pranzando alla tavola calda del circuito.",
-                    "motivo_apparente": "È stata licenziata dal team della vittima la settimana precedente."
+                    "ruolo": "Meccanico licenziato",
+                    "dialoghi": {
+                        "1": {
+                            "domanda": "Sappiamo che sei stata licenziata dalla vittima. Cercavi vendetta?",
+                            "risposta": "Ero furiosa, lo ammetto. Ma sabotare una moto significa tentare di uccidere qualcuno. Io sono un meccanico, non un'assassina."
+                        },
+                        "2": {
+                            "domanda": "Dov'eri al momento del sabotaggio?",
+                            "risposta": "Ero alla tavola calda del circuito a mangiare un panino."
+                        }
+                    }
                 }
             },
             "prove": {
@@ -85,13 +117,29 @@ def genera_database_casi():
             "sospettati": {
                 "Elena": {
                     "ruolo": "Segretaria",
-                    "alibi": "Ha portato il caffè ed è tornata alla sua scrivania fuori dall'ufficio.",
-                    "motivo_apparente": "Voleva vendicarsi dei maltrattamenti sul lavoro."
+                    "dialoghi": {
+                        "1": {
+                            "domanda": "Hai portato tu il caffè alla vittima?",
+                            "risposta": "Sì, come ogni mattina alle 08:30 in punto. Poi sono tornata alla mia scrivania all'ingresso."
+                        },
+                        "2": {
+                            "domanda": "È vero che lui ti maltrattava sul lavoro?",
+                            "risposta": "Era un tiranno, non lo nego. Ma avevo già pronta la lettera di dimissioni, non avevo motivo di avvelenarlo."
+                        }
+                    }
                 },
                 "Roberto": {
                     "ruolo": "Socio in affari",
-                    "alibi": "È arrivato in ufficio alle 08:45, scoprendo il corpo.",
-                    "motivo_apparente": "L'azienda stava per essere venduta contro la sua volontà."
+                    "dialoghi": {
+                        "1": {
+                            "domanda": "Quando ha scoperto il corpo?",
+                            "risposta": "Sono arrivato alle 08:45 per discutere di un contratto, e l'ho trovato già accasciato."
+                        },
+                        "2": {
+                            "domanda": "Siete in disaccordo sulla vendita dell'azienda?",
+                            "risposta": "Quell'idiota stava svendendo il lavoro di una vita. Stavo cercando di fargli cambiare idea."
+                        }
+                    }
                 }
             },
             "prove": {
@@ -116,11 +164,11 @@ def seleziona_caso_casuale(database):
     id_caso = random.choice(list(database.keys()))
     return database[id_caso]
 
-def mostra_menu_investigazione():
-    print("\n--- MENU INVESTIGAZIONE ---")
-    print("1. Rileggi i dettagli del crimine")
-    print("2. Interroga i sospettati e verifica gli alibi")
-    print("3. Esamina le prove raccolte")
+def mostra_menu_investigazione(ore_rimaste):
+    print(f"\n--- MENU INVESTIGAZIONE [Tempo rimasto: {ore_rimaste} ore] ---")
+    print("1. Rileggi i dettagli del crimine (-1 ora)")
+    print("2. Vai nella sala interrogatori (Scegli le domande, -1 ora per domanda)")
+    print("3. Esamina le prove raccolte (-2 ore)")
     print("4. Fai la tua accusa (Risolvi il caso)")
     print("5. Esci dal gioco")
     return input("Scegli un'azione (1-5): ")
@@ -130,24 +178,73 @@ def gioca():
     database = genera_database_casi()
     caso_attuale = seleziona_caso_casuale(database)
     print(f"\nÈ stato assegnato un nuovo caso: {caso_attuale['titolo']}")
+    
+    ore_rimaste = 14 # Aumentato leggermente il tempo base per bilanciare l'interrogatorio a domande
     risolto = False
 
     while not risolto:
-        scelta = mostra_menu_investigazione()
+        if ore_rimaste <= 0:
+            print("\n" + "="*55)
+            print("TEMPO SCADUTO! Il caso è rimasto irrisolto troppo a lungo.")
+            print("Il colpevole ha cancellato le sue tracce ed è fuggito.")
+            print("="*55)
+            break
+
+        scelta = mostra_menu_investigazione(ore_rimaste)
 
         if scelta == '1':
+            ore_rimaste -= 1
             print("\n--- INFORMAZIONI SUL CRIMINE ---")
             for chiave, valore in caso_attuale["info_crimine"].items():
                 print(f"{chiave.replace('_', ' ').capitalize()}: {valore}")
 
         elif scelta == '2':
-            print("\n--- SOSPETTATI ---")
-            for nome, info in caso_attuale["sospettati"].items():
-                print(f"\nSospettato: {nome}")
-                for chiave, valore in info.items():
-                    print(f" - {chiave.replace('_', ' ').capitalize()}: {valore}")
+            # --- MENU SCELTA SOSPETTATO ---
+            in_sala_interrogatori = True
+            while in_sala_interrogatori and ore_rimaste > 0:
+                print("\n--- SALA INTERROGATORI ---")
+                nomi_sospettati = list(caso_attuale["sospettati"].keys())
+                
+                for i, nome in enumerate(nomi_sospettati):
+                    ruolo = caso_attuale['sospettati'][nome]['ruolo']
+                    print(f"{i+1}. Interroga {nome} ({ruolo})")
+                print("0. Torna al menu principale")
+                
+                scelta_sos = input("\nChi vuoi far sedere al tavolo? (Scegli il numero): ")
+                
+                if scelta_sos == '0':
+                    in_sala_interrogatori = False
+                elif scelta_sos.isdigit() and 1 <= int(scelta_sos) <= len(nomi_sospettati):
+                    # --- MENU DOMANDE (ALBERO DI DIALOGO) ---
+                    indice_sos = int(scelta_sos) - 1
+                    sospettato_attuale = nomi_sospettati[indice_sos]
+                    dialoghi = caso_attuale["sospettati"][sospettato_attuale]["dialoghi"]
+                    
+                    in_interrogatorio = True
+                    while in_interrogatorio and ore_rimaste > 0:
+                        print(f"\n--- INTERROGANDO: {sospettato_attuale} [Ore rimaste: {ore_rimaste}] ---")
+                        for id_domanda, dati in dialoghi.items():
+                            print(f"{id_domanda}. Chiedi: \"{dati['domanda']}\" (-1 ora)")
+                        print("0. Congeda il sospettato")
+                        
+                        scelta_domanda = input("\nQuale domanda fai? ")
+                        
+                        if scelta_domanda == '0':
+                            in_interrogatorio = False
+                        elif scelta_domanda in dialoghi:
+                            ore_rimaste -= 1
+                            print(f"\n[{sospettato_attuale}]: \"{dialoghi[scelta_domanda]['risposta']}\"")
+                            
+                            if ore_rimaste <= 0:
+                                print("\nIl tuo tempo a disposizione è terminato nel bel mezzo dell'interrogatorio!")
+                                break
+                        else:
+                            print("\nScelta non valida.")
+                else:
+                    print("\nInput non valido, riprova.")
 
         elif scelta == '3':
+            ore_rimaste -= 2
             print("\n--- PROVE ---")
             for nome_prova, info in caso_attuale["prove"].items():
                 print(f"\nProva: {nome_prova}")
@@ -161,18 +258,20 @@ def gioca():
             accusa_colpevole = input("Chi è il vero colpevole? ")
             accusa_arma = input("Quale oggetto/arma è stato usato? ")
             
-            # Estraiamo le risposte corrette dal database per fare il confronto
             colpevole_reale = caso_attuale["soluzione"]["vero_colpevole"].lower().strip()
             arma_reale = caso_attuale["soluzione"]["arma_del_delitto"].lower().strip()
 
-            # Verifichiamo che ENTRAMBE le deduzioni siano giuste
             if accusa_colpevole.lower().strip() == colpevole_reale and accusa_arma.lower().strip() == arma_reale:
-                print("\nCOMPLIMENTI! Hai individuato il colpevole e l'arma del delitto.")
+                print("\n" + "="*55)
+                print("COMPLIMENTI! Hai individuato il colpevole e l'arma del delitto.")
                 print(f"Spiegazione ufficiale: {caso_attuale['soluzione']['spiegazione_finale']}")
+                print(f"Hai risolto il caso con ancora {ore_rimaste} ore di anticipo!")
+                print("="*55)
                 risolto = True
             else:
                 print("\nSbagliato. Le tue deduzioni su colpevole e/o arma non sono corrette.")
-                print("Il capo della polizia ti invita a rivedere attentamente le prove e gli alibi.")
+                print("L'accusa sbagliata ti ha fatto perdere tempo prezioso per l'interrogatorio delle procedure ufficiali.")
+                ore_rimaste -= 3 
 
         elif scelta == '5':
             print("Chiusura dell'indagine. Arrivederci!")
