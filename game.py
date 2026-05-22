@@ -164,11 +164,11 @@ def seleziona_caso_casuale(database):
     id_caso = random.choice(list(database.keys()))
     return database[id_caso]
 
-def mostra_menu_investigazione():
-    print("\n--- MENU INVESTIGAZIONE ---")
-    print("1. Rileggi i dettagli del crimine")
-    print("2. Interroga i sospettati e verifica gli alibi")
-    print("3. Esamina le prove raccolte")
+def mostra_menu_investigazione(ore_rimaste):
+    print(f"\n--- MENU INVESTIGAZIONE [Tempo rimasto: {ore_rimaste} ore] ---")
+    print("1. Rileggi i dettagli del crimine (-1 ora)")
+    print("2. Vai nella sala interrogatori (Scegli le domande, -1 ora per domanda)")
+    print("3. Esamina le prove raccolte (-2 ore)")
     print("4. Fai la tua accusa (Risolvi il caso)")
     print("5. Esci dal gioco")
     return input("Scegli un'azione (1-5): ")
@@ -178,10 +178,19 @@ def gioca():
     database = genera_database_casi()
     caso_attuale = seleziona_caso_casuale(database)
     print(f"\nÈ stato assegnato un nuovo caso: {caso_attuale['titolo']}")
+    
+    ore_rimaste = 14 # Aumentato leggermente il tempo base per bilanciare l'interrogatorio a domande
     risolto = False
 
     while not risolto:
-        scelta = mostra_menu_investigazione()
+        if ore_rimaste <= 0:
+            print("\n" + "="*55)
+            print("TEMPO SCADUTO! Il caso è rimasto irrisolto troppo a lungo.")
+            print("Il colpevole ha cancellato le sue tracce ed è fuggito.")
+            print("="*55)
+            break
+
+        scelta = mostra_menu_investigazione(ore_rimaste)
 
         if scelta == '1':
             ore_rimaste -= 1
@@ -190,11 +199,49 @@ def gioca():
                 print(f"{chiave.replace('_', ' ').capitalize()}: {valore}")
 
         elif scelta == '2':
-            print("\n--- SOSPETTATI ---")
-            for nome, info in caso_attuale["sospettati"].items():
-                print(f"\nSospettato: {nome}")
-                for chiave, valore in info.items():
-                    print(f" - {chiave.replace('_', ' ').capitalize()}: {valore}")
+            # --- MENU SCELTA SOSPETTATO ---
+            in_sala_interrogatori = True
+            while in_sala_interrogatori and ore_rimaste > 0:
+                print("\n--- SALA INTERROGATORI ---")
+                nomi_sospettati = list(caso_attuale["sospettati"].keys())
+                
+                for i, nome in enumerate(nomi_sospettati):
+                    ruolo = caso_attuale['sospettati'][nome]['ruolo']
+                    print(f"{i+1}. Interroga {nome} ({ruolo})")
+                print("0. Torna al menu principale")
+                
+                scelta_sos = input("\nChi vuoi far sedere al tavolo? (Scegli il numero): ")
+                
+                if scelta_sos == '0':
+                    in_sala_interrogatori = False
+                elif scelta_sos.isdigit() and 1 <= int(scelta_sos) <= len(nomi_sospettati):
+                    # --- MENU DOMANDE (ALBERO DI DIALOGO) ---
+                    indice_sos = int(scelta_sos) - 1
+                    sospettato_attuale = nomi_sospettati[indice_sos]
+                    dialoghi = caso_attuale["sospettati"][sospettato_attuale]["dialoghi"]
+                    
+                    in_interrogatorio = True
+                    while in_interrogatorio and ore_rimaste > 0:
+                        print(f"\n--- INTERROGANDO: {sospettato_attuale} [Ore rimaste: {ore_rimaste}] ---")
+                        for id_domanda, dati in dialoghi.items():
+                            print(f"{id_domanda}. Chiedi: \"{dati['domanda']}\" (-1 ora)")
+                        print("0. Congeda il sospettato")
+                        
+                        scelta_domanda = input("\nQuale domanda fai? ")
+                        
+                        if scelta_domanda == '0':
+                            in_interrogatorio = False
+                        elif scelta_domanda in dialoghi:
+                            ore_rimaste -= 1
+                            print(f"\n[{sospettato_attuale}]: \"{dialoghi[scelta_domanda]['risposta']}\"")
+                            
+                            if ore_rimaste <= 0:
+                                print("\nIl tuo tempo a disposizione è terminato nel bel mezzo dell'interrogatorio!")
+                                break
+                        else:
+                            print("\nScelta non valida.")
+                else:
+                    print("\nInput non valido, riprova.")
 
         elif scelta == '3':
             ore_rimaste -= 2
@@ -207,21 +254,24 @@ def gioca():
         elif scelta == '4':
             print("\n--- ACCUSA FINALE ---")
             print("(Usa una sola parola per rispondere, es. il nome esatto o l'oggetto)")
-           
+            
             accusa_colpevole = input("Chi è il vero colpevole? ")
             accusa_arma = input("Quale oggetto/arma è stato usato? ")
             
-            # Estraiamo le risposte corrette dal database per fare il confronto
             colpevole_reale = caso_attuale["soluzione"]["vero_colpevole"].lower().strip()
             arma_reale = caso_attuale["soluzione"]["arma_del_delitto"].lower().strip()
 
             if accusa_colpevole.lower().strip() == colpevole_reale and accusa_arma.lower().strip() == arma_reale:
-                print("\nCOMPLIMENTI! Hai individuato il colpevole e l'arma del delitto.")
+                print("\n" + "="*55)
+                print("COMPLIMENTI! Hai individuato il colpevole e l'arma del delitto.")
                 print(f"Spiegazione ufficiale: {caso_attuale['soluzione']['spiegazione_finale']}")
+                print(f"Hai risolto il caso con ancora {ore_rimaste} ore di anticipo!")
+                print("="*55)
                 risolto = True
             else:
                 print("\nSbagliato. Le tue deduzioni su colpevole e/o arma non sono corrette.")
-                print("Il capo della polizia ti invita a rivedere attentamente le prove e gli alibi.")
+                print("L'accusa sbagliata ti ha fatto perdere tempo prezioso per l'interrogatorio delle procedure ufficiali.")
+                ore_rimaste -= 3 
 
         elif scelta == '5':
             print("Chiusura dell'indagine. Arrivederci!")
@@ -231,5 +281,3 @@ def gioca():
 
 if __name__ == "__main__":
     gioca()
-
- 
