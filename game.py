@@ -1,5 +1,38 @@
 import random
 
+RESET = "\033[0m"
+BOLD = "\033[1m"
+RED = "\033[31m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+CYAN = "\033[36m"
+
+
+print(f"{BOLD}{GREEN}✔ CONFIGURAZIONE COMPLETATA:{RESET} Il database dei sospettati è online.")
+print(f"{BOLD}{RED}✘ ERRORE DI ACCESSO:{RESET} File criptato. Inserire le credenziali corrette.\n")
+
+
+testo_indagine = (
+f"Durante l'interrogatorio, il testimone ha menzionato due individui presenti sulla scena: "
+f"{BOLD}{YELLOW}Marcus Vance{RESET} e la coordinatrice {BOLD}{YELLOW}Elena Rostova{RESET}."
+)
+
+
+print(f"{CYAN}" + "─" * 60)
+print(f" DETTAGLI INDAGINE")
+print("─" * 60 + f"{RESET}")
+print(testo_indagine)
+print(f"{CYAN}" + "─" * 60 + f"{RESET}\n")
+
+
+print(f"{BOLD}{CYAN}=== REGISTRO INDIZIATI ==={RESET}")
+format_riga = "{:<5} | {:<20} | {:<20}"
+print(format_riga.format("ID", "Nome Sospettato", "Stato Alibi"))
+print("-" * 50)
+print(format_riga.format("001", f"{BOLD}{YELLOW}Marcus Vance{RESET}", f"{RED}Falso{RESET}"))
+print(format_riga.format("002", f"{BOLD}{YELLOW}Elena Rostova{RESET}", f"{GREEN}Verificato{RESET}"))
+print(format_riga.format("003", f"{BOLD}{YELLOW}Arthur Pendelton{RESET}", f"{YELLOW}In verifica{RESET}"))
+
 def genera_database_casi():
     return {
         "caso_001": {
