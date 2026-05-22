@@ -116,11 +116,11 @@ def seleziona_caso_casuale(database):
     id_caso = random.choice(list(database.keys()))
     return database[id_caso]
 
-def mostra_menu_investigazione():
-    print("\n--- MENU INVESTIGAZIONE ---")
-    print("1. Rileggi i dettagli del crimine")
-    print("2. Interroga i sospettati e verifica gli alibi")
-    print("3. Esamina le prove raccolte")
+def mostra_menu_investigazione(ore_rimaste):
+    print(f"\n--- MENU INVESTIGAZIONE [Tempo rimasto: {ore_rimaste} ore] ---")
+    print("1. Rileggi i dettagli del crimine (-1 ora)")
+    print("2. Interroga i sospettati e verifica gli alibi (-2 ore)")
+    print("3. Esamina le prove raccolte (-2 ore)")
     print("4. Fai la tua accusa (Risolvi il caso)")
     print("5. Esci dal gioco")
     return input("Scegli un'azione (1-5): ")
@@ -130,17 +130,30 @@ def gioca():
     database = genera_database_casi()
     caso_attuale = seleziona_caso_casuale(database)
     print(f"\nÈ stato assegnato un nuovo caso: {caso_attuale['titolo']}")
+   
+    # Inizializzazione della variabile del tempo
+    ore_rimaste = 12
     risolto = False
 
     while not risolto:
-        scelta = mostra_menu_investigazione()
+        # Controllo della condizione di sconfitta per tempo scaduto
+        if ore_rimaste <= 0:
+            print("\n=======================================================")
+            print("TEMPO SCADUTO! Il caso è rimasto irrisolto troppo a lungo.")
+            print("Il colpevole ha cancellato le sue tracce ed è fuggito.")
+            print("=======================================================")
+            break
+
+        scelta = mostra_menu_investigazione(ore_rimaste)
 
         if scelta == '1':
+            ore_rimaste -= 1
             print("\n--- INFORMAZIONI SUL CRIMINE ---")
             for chiave, valore in caso_attuale["info_crimine"].items():
                 print(f"{chiave.replace('_', ' ').capitalize()}: {valore}")
 
         elif scelta == '2':
+            ore_rimaste -= 2
             print("\n--- SOSPETTATI ---")
             for nome, info in caso_attuale["sospettati"].items():
                 print(f"\nSospettato: {nome}")
@@ -148,6 +161,7 @@ def gioca():
                     print(f" - {chiave.replace('_', ' ').capitalize()}: {valore}")
 
         elif scelta == '3':
+            ore_rimaste -= 2
             print("\n--- PROVE ---")
             for nome_prova, info in caso_attuale["prove"].items():
                 print(f"\nProva: {nome_prova}")
@@ -157,22 +171,24 @@ def gioca():
         elif scelta == '4':
             print("\n--- ACCUSA FINALE ---")
             print("(Usa una sola parola per rispondere, es. il nome esatto o l'oggetto)")
-            
+           
             accusa_colpevole = input("Chi è il vero colpevole? ")
             accusa_arma = input("Quale oggetto/arma è stato usato? ")
-            
-            # Estraiamo le risposte corrette dal database per fare il confronto
+           
             colpevole_reale = caso_attuale["soluzione"]["vero_colpevole"].lower().strip()
             arma_reale = caso_attuale["soluzione"]["arma_del_delitto"].lower().strip()
 
-            # Verifichiamo che ENTRAMBE le deduzioni siano giuste
             if accusa_colpevole.lower().strip() == colpevole_reale and accusa_arma.lower().strip() == arma_reale:
-                print("\nCOMPLIMENTI! Hai individuato il colpevole e l'arma del delitto.")
+                print("\n=======================================================")
+                print("COMPLIMENTI! Hai individuato il colpevole e l'arma del delitto.")
                 print(f"Spiegazione ufficiale: {caso_attuale['soluzione']['spiegazione_finale']}")
+                print(f"Hai risolto il caso con ancora {ore_rimaste} ore di anticipo!")
+                print("=======================================================")
                 risolto = True
             else:
                 print("\nSbagliato. Le tue deduzioni su colpevole e/o arma non sono corrette.")
-                print("Il capo della polizia ti invita a rivedere attentamente le prove e gli alibi.")
+                print("L'accusa sbagliata ti ha fatto perdere tempo prezioso per l'interrogatorio delle procedure ufficiali.")
+                ore_rimaste -= 3  # Penalità extra per un'accusa errata
 
         elif scelta == '5':
             print("Chiusura dell'indagine. Arrivederci!")
@@ -182,3 +198,5 @@ def gioca():
 
 if __name__ == "__main__":
     gioca()
+
+ 
