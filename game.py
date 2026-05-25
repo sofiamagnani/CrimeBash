@@ -180,6 +180,106 @@ def genera_database_casi():
                 "arma_del_delitto": "veleno",
                 "spiegazione_finale": "Roberto è arrivato prima, ha litigato e avvelenato il caffè."
             }
+        },
+        "caso_004": {
+            "titolo": "Il Manoscritto Scomparso",
+            "info_crimine": {
+                "vittima": "Archivio Storico",
+                "luogo": "Sezione Letteratura Medievale",
+                "ora_stimata": "Notte fonda"
+            },
+            "sospettati": {
+                "Beatrice": {
+                    "ruolo": "Bibliotecaria",
+                    "dialoghi": {
+                        "1": {"domanda": "Dov'eri questa notte?", "risposta": "Facevo l'inventario nell'ala est dell'archivio, lontano dalle teche."},
+                        "2": {"domanda": "Perché l'allarme era disattivato?", "risposta": "C'è stato un calo di tensione documentato. Nessun sabotaggio."}
+                    }
+                },
+                "Virgilio": {
+                    "ruolo": "Professore Universitario",
+                    "dialoghi": {
+                        "1": {"domanda": "Cosa ci faceva qui fino a tardi?", "risposta": "Studiavo il Canto 26 dell'Inferno per una mia nuova pubblicazione."},
+                        "2": {"domanda": "Le serviva il De Monarchia, per caso?", "risposta": "No, i miei studi sono puramente poetici, non mi occupo di scritti politici."}
+                    }
+                }
+            },
+            "prove": {
+                "Teca": {"luogo_ritrovamento": "Centro della sala", "descrizione": "Una teca in vetro forzata. Al suo interno mancava una rara trascrizione commentata del trattato di Dante Alighieri."},
+                "Serratura Elettronica": {
+                    "cifrato": True,
+                    "decifrato": False,
+                    "luogo_ritrovamento": "Porta dello studio di Virgilio",
+                    "descrizione": "Il professore ha lasciato un promemoria cifrato sulla scrivania. È un anagramma: 'ACILITOP'.",
+                    "testo_nascosto": "A C I L I T O P",
+                    "parola_sblocco": "politica",
+                    "descrizione_sbloccata": "Appunto rivelato: 'Appunti per saggio sulla politica dantesca'."
+                },
+                "Strumento": {"luogo_ritrovamento": "Tappeto vicino alla teca", "descrizione": "Una spessa graffetta di metallo piegata ad arte per far scattare le vecchie serrature."}
+            },
+            "combinazioni": {
+                "virgilio_serratura": {
+                    "elementi_richiesti": ["Virgilio", "Serratura Elettronica"],
+                    "scoperta": "Virgilio ha affermato di non essere minimamente interessato alle opere politiche, ma i suoi appunti privati dimostrano l'esatto contrario. Ha mentito sul suo movente!",
+                    "sbloccato": False,
+                    "nome_nuova_prova": "Deduzione: La finta ignoranza"
+                }
+            },
+            "soluzione": {
+                "vero_colpevole": "virgilio",
+                "arma_del_delitto": "graffetta",
+                "spiegazione_finale": "Virgilio voleva accaparrarsi il De Monarchia per pubblicare una ricerca inedita a suo nome. Ha usato una graffetta per forzare la teca, approfittando del calo di tensione."
+            }
+        },
+        "caso_005": {
+            "titolo": "Il Sabotaggio Biologico",
+            "info_crimine": {
+                "vittima": "Progetto Scolastico",
+                "luogo": "Laboratorio di Chimica e Scienze",
+                "ora_stimata": "Pausa pranzo"
+            },
+            "sospettati": {
+                "Leo": {
+                    "ruolo": "Studente modello",
+                    "dialoghi": {
+                        "1": {"domanda": "Eri in laboratorio durante la pausa?", "risposta": "Sì, ripassavo chimica inorganica e le reazioni base in silenzio."},
+                        "2": {"domanda": "Invidioso del progetto altrui?", "risposta": "Io ho sempre i voti più alti della classe, non ho bisogno di sabotare gli altri."}
+                    }
+                },
+                "Sofia": {
+                    "ruolo": "Rappresentante d'istituto",
+                    "dialoghi": {
+                        "1": {"domanda": "Cosa facevi nei corridoi del laboratorio?", "risposta": "Cercavo dei gessetti di scorta per la nostra lavagna di classe."},
+                        "2": {"domanda": "Hai accesso ai reagenti?", "risposta": "No, gli armadietti della chimica sono chiusi a chiave dai professori."}
+                    }
+                }
+            },
+            "prove": {
+                "Preparato": {"luogo_ritrovamento": "Bancone da lavoro", "descrizione": "Il reperto biologico (un cervello di vitello da analizzare) è stato completamente corroso, distruggendo il lavoro di un mese."},
+                "Registro Digitale": {
+                    "cifrato": True,
+                    "decifrato": False,
+                    "luogo_ritrovamento": "Armadietto dei reagenti chimici",
+                    "descrizione": "Il log di accesso all'armadietto è protetto da un indovinello del prof: 'Indica il numero atomico del carbonio (usa la cifra numerica)'.",
+                    "testo_nascosto": "X",
+                    "parola_sblocco": "6",
+                    "descrizione_sbloccata": "Il registro elettronico mostra un log di apertura recente effettuato con le credenziali personali di Leo."
+                },
+                "Flacone": {"luogo_ritrovamento": "Lavandino del laboratorio", "descrizione": "Un becher contenente tracce di un potente acido corrosivo."}
+            },
+            "combinazioni": {
+                "leo_registro": {
+                    "elementi_richiesti": ["Leo", "Registro Digitale"],
+                    "scoperta": "Leo sostiene di aver passato il tempo a studiare al suo banco, ma il suo codice personale ha aperto l'armadietto dei reagenti altamente pericolosi!",
+                    "sbloccato": False,
+                    "nome_nuova_prova": "Deduzione: L'accesso non autorizzato"
+                }
+            },
+            "soluzione": {
+                "vero_colpevole": "leo",
+                "arma_del_delitto": "acido",
+                "spiegazione_finale": "Leo temeva che l'eccellente dissezione del cervello di vitello garantisse ai compagni un voto superiore al suo, minacciando il suo primato. Ha usato il suo account per prendere l'acido e distruggere la prova."
+            }
         }
     }
 
