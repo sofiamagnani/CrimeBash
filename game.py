@@ -1,38 +1,36 @@
 import random
 
-RESET = "\033[0m"
-BOLD = "\033[1m"
-RED = "\033[31m"
-GREEN = "\033[32m"
-YELLOW = "\033[33m"
-CYAN = "\033[36m"
+# --- CLASSE PER I COLORI E STILI (Codici ANSI) ---
+class Stile:
+    RESET = '\033[0m'
+    GRASSETTO = '\033[1m'
+    ROSSO = '\033[91m'
+    VERDE = '\033[92m'
+    GIALLO = '\033[93m'
+    BLU = '\033[94m'
+    VIOLA = '\033[95m'
+    CIANO = '\033[96m'
+    
+# --- FUNZIONI DI SUPPORTO PER L'INTERFACCIA ---
+def stampa_titolo(testo):
+    print(f"\n{Stile.CIANO}{Stile.GRASSETTO}{'='*60}")
+    print(f"{testo.center(60)}")
+    print(f"{'='*60}{Stile.RESET}")
 
+def stampa_sottotitolo(testo):
+    print(f"\n{Stile.BLU}{Stile.GRASSETTO}--- {testo} ---{Stile.RESET}")
 
-print(f"{BOLD}{GREEN}✔ CONFIGURAZIONE COMPLETATA:{RESET} Il database dei sospettati è online.")
-print(f"{BOLD}{RED}✘ ERRORE DI ACCESSO:{RESET} File criptato. Inserire le credenziali corrette.\n")
+def stampa_errore(testo):
+    print(f"\n{Stile.ROSSO}{Stile.GRASSETTO}[!] {testo}{Stile.RESET}")
 
+def stampa_successo(testo):
+    print(f"{Stile.VERDE}{Stile.GRASSETTO}[✔] {testo}{Stile.RESET}")
 
-testo_indagine = (
-f"Durante l'interrogatorio, il testimone ha menzionato due individui presenti sulla scena: "
-f"{BOLD}{YELLOW}Marcus Vance{RESET} e la coordinatrice {BOLD}{YELLOW}Elena Rostova{RESET}."
-)
+def formatta_tempo(ore):
+    colore = Stile.VERDE if ore > 6 else Stile.GIALLO if ore > 3 else Stile.ROSSO
+    return f"{colore}{Stile.GRASSETTO}{ore} ore{Stile.RESET}"
 
-
-print(f"{CYAN}" + "─" * 60)
-print(f" DETTAGLI INDAGINE")
-print("─" * 60 + f"{RESET}")
-print(testo_indagine)
-print(f"{CYAN}" + "─" * 60 + f"{RESET}\n")
-
-
-print(f"{BOLD}{CYAN}=== REGISTRO INDIZIATI ==={RESET}")
-format_riga = "{:<5} | {:<20} | {:<20}"
-print(format_riga.format("ID", "Nome Sospettato", "Stato Alibi"))
-print("-" * 50)
-print(format_riga.format("001", f"{BOLD}{YELLOW}Marcus Vance{RESET}", f"{RED}Falso{RESET}"))
-print(format_riga.format("002", f"{BOLD}{YELLOW}Elena Rostova{RESET}", f"{GREEN}Verificato{RESET}"))
-print(format_riga.format("003", f"{BOLD}{YELLOW}Arthur Pendelton{RESET}", f"{YELLOW}In verifica{RESET}"))
-
+# --- DATABASE CASI ---
 def genera_database_casi():
     return {
         "caso_001": {
@@ -47,44 +45,26 @@ def genera_database_casi():
                 "Marco": {
                     "ruolo": "Custode notturno",
                     "dialoghi": {
-                        "1": {
-                            "domanda": "Dov'eri tra le 02:00 e le 04:00?",
-                            "risposta": "Stavo facendo la ronda nel lato opposto dell'edificio. È una struttura enorme, non ho sentito rumori di vetri rotti."
-                        },
-                        "2": {
-                            "domanda": "Sappiamo che hai molti debiti di gioco...",
-                            "risposta": "(Suda) Non sono affari vostri. E comunque sto ripagando tutto, non ruberei mai un'opera d'arte per questo."
-                        }
+                        "1": {"domanda": "Dov'eri tra le 02:00 e le 04:00?", "risposta": "Stavo facendo la ronda nel lato opposto dell'edificio. Non ho sentito rumori."},
+                        "2": {"domanda": "Sappiamo che hai molti debiti di gioco...", "risposta": "(Suda) Non sono affari vostri. Non ruberei mai un'opera d'arte per questo."}
                     }
                 },
                 "Giulia": {
                     "ruolo": "Restauratrice",
                     "dialoghi": {
-                        "1": {
-                            "domanda": "Dov'eri stanotte?",
-                            "risposta": "Ero a casa a dormire. Vivo da sola, quindi dovrete fidarvi della mia parola."
-                        },
-                        "2": {
-                            "domanda": "Hai accesso agli attrezzi di restauro?",
-                            "risposta": "Certo, è il mio lavoro. Ma tengo sempre la mia cassetta degli attrezzi chiusa a chiave nel magazzino."
-                        }
+                        "1": {"domanda": "Dov'eri stanotte?", "risposta": "Ero a casa a dormire. Vivo da sola, quindi dovrete fidarvi della mia parola."},
+                        "2": {"domanda": "Hai accesso agli attrezzi di restauro?", "risposta": "Certo, ma tengo la mia cassetta chiusa a chiave nel magazzino."}
                     }
                 }
             },
             "prove": {
-                "Vetri": {
-                    "luogo_ritrovamento": "Marciapiede sotto la finestra",
-                    "descrizione": "I frammenti indicano che la finestra è stata colpita dall'interno verso l'esterno, simulando una falsa effrazione."
-                },
-                "Strumento": {
-                    "luogo_ritrovamento": "Nascosto dietro un vaso vicino alla cornice",
-                    "descrizione": "Un bisturi di altissima precisione, con minuscole tracce di pittura a olio e tela sul filo della lama."
-                }
+                "Vetri": {"luogo_ritrovamento": "Marciapiede sotto la finestra", "descrizione": "I frammenti indicano che la finestra è stata colpita dall'interno verso l'esterno."},
+                "Strumento": {"luogo_ritrovamento": "Nascosto dietro un vaso", "descrizione": "Un bisturi di altissima precisione con tracce di pittura a olio."}
             },
             "soluzione": {
                 "vero_colpevole": "giulia",
                 "arma_del_delitto": "bisturi",
-                "spiegazione_finale": "Giulia si è nascosta nella galleria dopo la chiusura. Ha usato il suo bisturi da restauro per estrarre la tela senza danneggiarla, poi ha rotto la finestra dall'interno per far credere che i ladri fossero entrati da fuori."
+                "spiegazione_finale": "Giulia si è nascosta nella galleria dopo la chiusura. Ha usato il suo bisturi da restauro per estrarre la tela senza danneggiarla, rompendo poi la finestra dall'interno."
             }
         },
         "caso_002": {
@@ -99,44 +79,26 @@ def genera_database_casi():
                 "Luca": {
                     "ruolo": "Pilota rivale",
                     "dialoghi": {
-                        "1": {
-                            "domanda": "Dov'eri poco prima delle qualifiche?",
-                            "risposta": "Ero nel mio box a concentrarmi. Mi stavo già preparando per scendere in pista."
-                        },
-                        "2": {
-                            "domanda": "Volevi disperatamente vincere questo campionato, vero?",
-                            "risposta": "Voglio vincere pulito in pista, non distruggendo la moto di un avversario ai box!"
-                        }
+                        "1": {"domanda": "Dov'eri poco prima delle qualifiche?", "risposta": "Ero nel mio box a concentrarmi. Mi stavo già preparando per la pista."},
+                        "2": {"domanda": "Volevi vincere questo campionato, vero?", "risposta": "Voglio vincere pulito in pista, non distruggendo la moto di un avversario!"}
                     }
                 },
                 "Anna": {
                     "ruolo": "Meccanico licenziato",
                     "dialoghi": {
-                        "1": {
-                            "domanda": "Sappiamo che sei stata licenziata dalla vittima. Cercavi vendetta?",
-                            "risposta": "Ero furiosa, lo ammetto. Ma sabotare una moto significa tentare di uccidere qualcuno. Io sono un meccanico, non un'assassina."
-                        },
-                        "2": {
-                            "domanda": "Dov'eri al momento del sabotaggio?",
-                            "risposta": "Ero alla tavola calda del circuito a mangiare un panino."
-                        }
+                        "1": {"domanda": "Cercavi vendetta per il licenziamento?", "risposta": "Ero furiosa, ma sabotare una moto significa tentare di uccidere qualcuno."},
+                        "2": {"domanda": "Dov'eri al momento del sabotaggio?", "risposta": "Ero alla tavola calda del circuito a mangiare un panino."}
                     }
                 }
             },
             "prove": {
-                "Cavo freno": {
-                    "luogo_ritrovamento": "Sulla pinza anteriore della moto incidentata",
-                    "descrizione": "Il tubo del liquido dei freni non è usurato dal tempo, presenta un taglio netto da recisione."
-                },
-                "Orma": {
-                    "luogo_ritrovamento": "Pozza d'olio vicino al box della vittima",
-                    "descrizione": "Un'impronta di uno stivale da corsa con saponette (slider). I meccanici usano scarpe antinfortunistiche, non stivali da pista."
-                }
+                "Cavo freno": {"luogo_ritrovamento": "Pinza anteriore della moto", "descrizione": "Il tubo del liquido dei freni presenta un taglio netto da recisione."},
+                "Orma": {"luogo_ritrovamento": "Pozza d'olio vicino al box", "descrizione": "Un'impronta di uno stivale da corsa con saponette (slider). I meccanici usano scarpe antinfortunistiche."}
             },
             "soluzione": {
                 "vero_colpevole": "luca",
                 "arma_del_delitto": "tronchesi",
-                "spiegazione_finale": "Luca, già vestito con i suoi stivali da corsa, è entrato di soppiatto nel box rivale e ha usato delle tronchesi per recidere di netto il tubo dei freni, eliminando l'avversario."
+                "spiegazione_finale": "Luca è entrato di soppiatto nel box rivale con i suoi stivali da corsa e ha usato delle tronchesi per recidere il tubo dei freni."
             }
         },
         "caso_003": {
@@ -151,44 +113,26 @@ def genera_database_casi():
                 "Elena": {
                     "ruolo": "Segretaria",
                     "dialoghi": {
-                        "1": {
-                            "domanda": "Hai portato tu il caffè alla vittima?",
-                            "risposta": "Sì, come ogni mattina alle 08:30 in punto. Poi sono tornata alla mia scrivania all'ingresso."
-                        },
-                        "2": {
-                            "domanda": "È vero che lui ti maltrattava sul lavoro?",
-                            "risposta": "Era un tiranno, non lo nego. Ma avevo già pronta la lettera di dimissioni, non avevo motivo di avvelenarlo."
-                        }
+                        "1": {"domanda": "Hai portato tu il caffè?", "risposta": "Sì, come ogni mattina. Poi sono tornata alla mia scrivania all'ingresso."},
+                        "2": {"domanda": "È vero che ti maltrattava?", "risposta": "Era un tiranno. Ma avevo già pronta la lettera di dimissioni."}
                     }
                 },
                 "Roberto": {
                     "ruolo": "Socio in affari",
                     "dialoghi": {
-                        "1": {
-                            "domanda": "Quando ha scoperto il corpo?",
-                            "risposta": "Sono arrivato alle 08:45 per discutere di un contratto, e l'ho trovato già accasciato."
-                        },
-                        "2": {
-                            "domanda": "Siete in disaccordo sulla vendita dell'azienda?",
-                            "risposta": "Quell'idiota stava svendendo il lavoro di una vita. Stavo cercando di fargli cambiare idea."
-                        }
+                        "1": {"domanda": "Quando ha scoperto il corpo?", "risposta": "Sono arrivato alle 08:45 per discutere di un contratto, e l'ho trovato già accasciato."},
+                        "2": {"domanda": "Siete in disaccordo sulla vendita?", "risposta": "Stava svendendo il lavoro di una vita. Cercavo di fargli cambiare idea."}
                     }
                 }
             },
             "prove": {
-                "Tazzina": {
-                    "luogo_ritrovamento": "Sulla scrivania della vittima",
-                    "descrizione": "Sul fondo c'è una polvere bianca cristallina che emana un vago sentore di mandorle amare."
-                },
-                "Contratto": {
-                    "luogo_ritrovamento": "Cestino dell'ufficio",
-                    "descrizione": "Il contratto di vendita dell'azienda strappato a metà. Su di esso c'è un'impronta digitale fresca appartenente a Roberto."
-                }
+                "Tazzina": {"luogo_ritrovamento": "Scrivania della vittima", "descrizione": "Sul fondo c'è una polvere bianca che odora di mandorle amare."},
+                "Contratto": {"luogo_ritrovamento": "Cestino dell'ufficio", "descrizione": "Contratto di vendita strappato. Su di esso c'è un'impronta fresca di Roberto."}
             },
             "soluzione": {
                 "vero_colpevole": "roberto",
                 "arma_del_delitto": "veleno",
-                "spiegazione_finale": "Roberto è arrivato prima di quanto dichiarato. Ha litigato con la vittima, ha strappato il contratto e, approfittando di una distrazione, ha versato il veleno nel caffè portato dalla segretaria."
+                "spiegazione_finale": "Roberto è arrivato prima di quanto dichiarato. Ha litigato, strappato il contratto e versato il veleno nel caffè approfittando di una distrazione."
             }
         }
     }
@@ -198,119 +142,115 @@ def seleziona_caso_casuale(database):
     return database[id_caso]
 
 def mostra_menu_investigazione(ore_rimaste):
-    print(f"\n--- MENU INVESTIGAZIONE [Tempo rimasto: {ore_rimaste} ore] ---")
-    print("1. Rileggi i dettagli del crimine (-1 ora)")
-    print("2. Vai nella sala interrogatori (Scegli le domande, -1 ora per domanda)")
-    print("3. Esamina le prove raccolte (-2 ore)")
-    print("4. Fai la tua accusa (Risolvi il caso)")
-    print("5. Esci dal gioco")
-    return input("Scegli un'azione (1-5): ")
+    stampa_titolo(f"MENU INVESTIGAZIONE | Tempo rimasto: {formatta_tempo(ore_rimaste)}")
+    print(f"{Stile.CIANO}1.{Stile.RESET} Rileggi i dettagli del crimine {Stile.ROSSO}(-1 ora){Stile.RESET}")
+    print(f"{Stile.CIANO}2.{Stile.RESET} Vai nella sala interrogatori   {Stile.ROSSO}(-1 ora x domanda){Stile.RESET}")
+    print(f"{Stile.CIANO}3.{Stile.RESET} Esamina le prove raccolte     {Stile.ROSSO}(-2 ore){Stile.RESET}")
+    print(f"{Stile.CIANO}4.{Stile.RESET} Fai la tua accusa (Risolvi il caso)")
+    print(f"{Stile.CIANO}5.{Stile.RESET} Esci dal gioco")
+    return input(f"\n{Stile.GRASSETTO}Scelta (1-5): {Stile.RESET}")
 
 def gioca():
-    print("Benvenuto nel Database Investigativo!")
+    print(f"\n{Stile.VERDE}{Stile.GRASSETTO}=== DATABASE INVESTIGATIVO INIZIALIZZATO ==={Stile.RESET}")
     database = genera_database_casi()
     caso_attuale = seleziona_caso_casuale(database)
-    print(f"\nÈ stato assegnato un nuovo caso: {caso_attuale['titolo']}")
     
-    ore_rimaste = 14 # Aumentato leggermente il tempo base per bilanciare l'interrogatorio a domande
+    print(f"\nÈ stato assegnato un nuovo caso: {Stile.GIALLO}{Stile.GRASSETTO}{caso_attuale['titolo']}{Stile.RESET}")
+    
+    ore_rimaste = 14
     risolto = False
 
     while not risolto:
         if ore_rimaste <= 0:
-            print("\n" + "="*55)
-            print("TEMPO SCADUTO! Il caso è rimasto irrisolto troppo a lungo.")
-            print("Il colpevole ha cancellato le sue tracce ed è fuggito.")
-            print("="*55)
+            stampa_errore("TEMPO SCADUTO!")
+            print(f"{Stile.ROSSO}Il caso è rimasto irrisolto troppo a lungo. Il colpevole è fuggito.{Stile.RESET}")
             break
 
         scelta = mostra_menu_investigazione(ore_rimaste)
 
         if scelta == '1':
             ore_rimaste -= 1
-            print("\n--- INFORMAZIONI SUL CRIMINE ---")
+            stampa_sottotitolo("INFORMAZIONI SUL CRIMINE")
             for chiave, valore in caso_attuale["info_crimine"].items():
-                print(f"{chiave.replace('_', ' ').capitalize()}: {valore}")
+                print(f"{Stile.GRASSETTO}{chiave.replace('_', ' ').capitalize()}:{Stile.RESET} {valore}")
 
         elif scelta == '2':
-            # --- MENU SCELTA SOSPETTATO ---
             in_sala_interrogatori = True
             while in_sala_interrogatori and ore_rimaste > 0:
-                print("\n--- SALA INTERROGATORI ---")
+                stampa_sottotitolo("SALA INTERROGATORI")
                 nomi_sospettati = list(caso_attuale["sospettati"].keys())
                 
                 for i, nome in enumerate(nomi_sospettati):
                     ruolo = caso_attuale['sospettati'][nome]['ruolo']
-                    print(f"{i+1}. Interroga {nome} ({ruolo})")
-                print("0. Torna al menu principale")
+                    print(f"{Stile.CIANO}{i+1}.{Stile.RESET} Interroga {Stile.GIALLO}{nome}{Stile.RESET} ({ruolo})")
+                print(f"{Stile.CIANO}0.{Stile.RESET} Torna al menu principale")
                 
-                scelta_sos = input("\nChi vuoi far sedere al tavolo? (Scegli il numero): ")
+                scelta_sos = input(f"\n{Stile.GRASSETTO}Chi vuoi interrogare? {Stile.RESET}")
                 
                 if scelta_sos == '0':
                     in_sala_interrogatori = False
                 elif scelta_sos.isdigit() and 1 <= int(scelta_sos) <= len(nomi_sospettati):
-                    # --- MENU DOMANDE (ALBERO DI DIALOGO) ---
                     indice_sos = int(scelta_sos) - 1
                     sospettato_attuale = nomi_sospettati[indice_sos]
                     dialoghi = caso_attuale["sospettati"][sospettato_attuale]["dialoghi"]
                     
                     in_interrogatorio = True
                     while in_interrogatorio and ore_rimaste > 0:
-                        print(f"\n--- INTERROGANDO: {sospettato_attuale} [Ore rimaste: {ore_rimaste}] ---")
+                        stampa_sottotitolo(f"INTERROGANDO: {sospettato_attuale.upper()} [Tempo: {formatta_tempo(ore_rimaste)}]")
                         for id_domanda, dati in dialoghi.items():
-                            print(f"{id_domanda}. Chiedi: \"{dati['domanda']}\" (-1 ora)")
-                        print("0. Congeda il sospettato")
+                            print(f"{Stile.CIANO}{id_domanda}.{Stile.RESET} Chiedi: \"{dati['domanda']}\" {Stile.ROSSO}(-1 ora){Stile.RESET}")
+                        print(f"{Stile.CIANO}0.{Stile.RESET} Congeda il sospettato")
                         
-                        scelta_domanda = input("\nQuale domanda fai? ")
+                        scelta_domanda = input(f"\n{Stile.GRASSETTO}Quale domanda fai? {Stile.RESET}")
                         
                         if scelta_domanda == '0':
                             in_interrogatorio = False
                         elif scelta_domanda in dialoghi:
                             ore_rimaste -= 1
-                            print(f"\n[{sospettato_attuale}]: \"{dialoghi[scelta_domanda]['risposta']}\"")
+                            print(f"\n{Stile.GIALLO}[{sospettato_attuale}]:{Stile.RESET} \"{dialoghi[scelta_domanda]['risposta']}\"")
                             
                             if ore_rimaste <= 0:
-                                print("\nIl tuo tempo a disposizione è terminato nel bel mezzo dell'interrogatorio!")
+                                stampa_errore("Il tuo tempo è terminato nel bel mezzo dell'interrogatorio!")
                                 break
                         else:
-                            print("\nScelta non valida.")
+                            print(f"{Stile.ROSSO}Scelta non valida.{Stile.RESET}")
                 else:
-                    print("\nInput non valido, riprova.")
+                    print(f"{Stile.ROSSO}Input non valido, riprova.{Stile.RESET}")
 
         elif scelta == '3':
             ore_rimaste -= 2
-            print("\n--- PROVE ---")
+            stampa_sottotitolo("ARCHIVIO PROVE")
             for nome_prova, info in caso_attuale["prove"].items():
-                print(f"\nProva: {nome_prova}")
+                print(f"\n{Stile.VIOLA}{Stile.GRASSETTO}Prova: {nome_prova}{Stile.RESET}")
                 for chiave, valore in info.items():
-                    print(f" - {chiave.replace('_', ' ').capitalize()}: {valore}")
+                    print(f" {Stile.GRASSETTO}-{Stile.RESET} {chiave.replace('_', ' ').capitalize()}: {valore}")
 
         elif scelta == '4':
-            print("\n--- ACCUSA FINALE ---")
-            print("(Usa una sola parola per rispondere, es. il nome esatto o l'oggetto)")
+            stampa_sottotitolo("ACCUSA FINALE")
+            print(f"{Stile.GIALLO}(Usa una sola parola per rispondere, es. il nome esatto o l'oggetto){Stile.RESET}")
             
-            accusa_colpevole = input("Chi è il vero colpevole? ")
-            accusa_arma = input("Quale oggetto/arma è stato usato? ")
+            accusa_colpevole = input(f"\n{Stile.GRASSETTO}Chi è il vero colpevole? {Stile.RESET}")
+            accusa_arma = input(f"{Stile.GRASSETTO}Quale oggetto/arma è stato usato? {Stile.RESET}")
             
             colpevole_reale = caso_attuale["soluzione"]["vero_colpevole"].lower().strip()
             arma_reale = caso_attuale["soluzione"]["arma_del_delitto"].lower().strip()
 
             if accusa_colpevole.lower().strip() == colpevole_reale and accusa_arma.lower().strip() == arma_reale:
-                print("\n" + "="*55)
-                print("COMPLIMENTI! Hai individuato il colpevole e l'arma del delitto.")
-                print(f"Spiegazione ufficiale: {caso_attuale['soluzione']['spiegazione_finale']}")
-                print(f"Hai risolto il caso con ancora {ore_rimaste} ore di anticipo!")
-                print("="*55)
+                stampa_titolo("CASO RISOLTO!")
+                stampa_successo("Hai individuato il colpevole e l'arma del delitto.")
+                print(f"\n{Stile.GIALLO}Spiegazione ufficiale:{Stile.RESET} {caso_attuale['soluzione']['spiegazione_finale']}")
+                print(f"{Stile.VERDE}Hai chiuso il caso con ancora {ore_rimaste} ore di anticipo!{Stile.RESET}\n")
                 risolto = True
             else:
-                print("\nSbagliato. Le tue deduzioni su colpevole e/o arma non sono corrette.")
-                print("L'accusa sbagliata ti ha fatto perdere tempo prezioso per l'interrogatorio delle procedure ufficiali.")
+                stampa_errore("Le tue deduzioni su colpevole e/o arma non sono corrette.")
+                print("L'accusa sbagliata ti ha fatto perdere 3 ore di tempo prezioso.")
                 ore_rimaste -= 3 
 
         elif scelta == '5':
-            print("Chiusura dell'indagine. Arrivederci!")
+            print(f"\n{Stile.BLU}Chiusura dell'indagine. Arrivederci!{Stile.RESET}")
             break
         else:
-            print("Scelta non valida. Riprova.")
+            print(f"{Stile.ROSSO}Scelta non valida. Riprova.{Stile.RESET}")
 
 if __name__ == "__main__":
     gioca()
