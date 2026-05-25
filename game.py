@@ -1,4 +1,8 @@
- RESET = '\033[0m'
+import random
+
+# --- CLASSE PER I COLORI E STILI (Codici ANSI) ---
+class Stile:
+    RESET = '\033[0m'
     GRASSETTO = '\033[1m'
     ROSSO = '\033[91m'
     VERDE = '\033[92m'
@@ -62,6 +66,15 @@ def genera_database_casi():
                     "testo_nascosto": "T R I B U S I",
                     "parola_sblocco": "bisturi",
                     "descrizione_sbloccata": "Cronologia ricerche: 'Come rimuovere una tela antica senza danneggiare i bordi'."
+                },
+                "Strumento": {"luogo_ritrovamento": "Nascosto dietro un vaso", "descrizione": "Un bisturi di altissima precisione con tracce di pittura a olio."}
+            },
+            "combinazioni": {
+                "giulia_bisturi": {
+                    "elementi_richiesti": ["Giulia", "Strumento"],
+                    "scoperta": "Il bisturi ritrovato è un attrezzo specifico per restauratori. Smentisce la dichiarazione di Giulia secondo cui i suoi attrezzi erano al sicuro e chiusi a chiave!",
+                    "sbloccato": False,
+                    "nome_nuova_prova": "Deduzione: La bugia di Giulia"
                 }
             },
             "soluzione": {
@@ -105,6 +118,14 @@ def genera_database_casi():
                     "descrizione_sbloccata": "All'interno dell'armadietto di Luca ci sono delle tronchesi sporche di liquido freni."
                 }
             },
+            "combinazioni": {
+                "orma_luca": {
+                    "elementi_richiesti": ["Orma", "Luca"],
+                    "scoperta": "L'impronta di stivale con saponette non può appartenere al meccanico (Anna). L'unico vestito con attrezzatura da pista al momento del sabotaggio era Luca!",
+                    "sbloccato": False,
+                    "nome_nuova_prova": "Deduzione: Stivali Incastranti"
+                }
+            },
             "soluzione": {
                 "vero_colpevole": "luca",
                 "arma_del_delitto": "tronchesi",
@@ -135,15 +156,23 @@ def genera_database_casi():
                 }
             },
             "prove": {
-                "Contratto": {"luogo_ritrovamento": "Cestino", "descrizione": "Contratto strappato con impronta di Roberto."},
+                "Contratto": {"luogo_ritrovamento": "Cestino", "descrizione": "Contratto strappato con impronta digitale fresca di Roberto."},
                 "Appunto Cifrato": {
                     "cifrato": True,
                     "decifrato": False,
                     "luogo_ritrovamento": "Tasca della vittima",
-                    "descrizione": "La vittima ha scritto un promemoria usando il Cifrario di Cesare con spostamento di +3 (A diventa D, B diventa E).",
+                    "descrizione": "La vittima ha scritto un promemoria usando il Cifrario di Cesare con spostamento di +3 (A=D, B=E).",
                     "testo_nascosto": "Y H O H Q R",
                     "parola_sblocco": "veleno",
                     "descrizione_sbloccata": "Promemoria: 'Roberto ha comprato un veleno letale al mercato nero. Devo affrontarlo stamattina'."
+                }
+            },
+            "combinazioni": {
+                "roberto_contratto": {
+                    "elementi_richiesti": ["Roberto", "Contratto"],
+                    "scoperta": "Se Roberto è arrivato alle 08:45 a omicidio già avvenuto, come fa ad esserci la sua impronta FRESCA sul contratto cestinato? Mente sull'orario di arrivo!",
+                    "sbloccato": False,
+                    "nome_nuova_prova": "Deduzione: Il finto alibi"
                 }
             },
             "soluzione": {
@@ -160,12 +189,13 @@ def seleziona_caso_casuale(database):
 
 def mostra_menu_investigazione(ore_rimaste):
     stampa_titolo(f"MENU INVESTIGAZIONE | Tempo rimasto: {formatta_tempo(ore_rimaste)}")
-    print(f"{Stile.CIANO}1.{Stile.RESET} Rileggi i dettagli del crimine {Stile.ROSSO}(-1 ora){Stile.RESET}")
-    print(f"{Stile.CIANO}2.{Stile.RESET} Vai nella sala interrogatori   {Stile.ROSSO}(-1 ora x domanda){Stile.RESET}")
-    print(f"{Stile.CIANO}3.{Stile.RESET} Esamina le prove e i cifrari  {Stile.ROSSO}(-2 ore){Stile.RESET}")
-    print(f"{Stile.CIANO}4.{Stile.RESET} Fai la tua accusa (Risolvi il caso)")
-    print(f"{Stile.CIANO}5.{Stile.RESET} Esci dal gioco")
-    return input(f"\n{Stile.GRASSETTO}Scelta (1-5): {Stile.RESET}")
+    print(f"{Stile.CIANO}1.{Stile.RESET} Rileggi i dettagli del crimine      {Stile.ROSSO}(-1 ora){Stile.RESET}")
+    print(f"{Stile.CIANO}2.{Stile.RESET} Vai nella sala interrogatori        {Stile.ROSSO}(-1 ora x domanda){Stile.RESET}")
+    print(f"{Stile.CIANO}3.{Stile.RESET} Esamina le prove e i cifrari       {Stile.ROSSO}(-2 ore){Stile.RESET}")
+    print(f"{Stile.CIANO}4.{Stile.RESET} Lavagna Deduzioni (Unisci indizi)   {Stile.ROSSO}(-1 ora){Stile.RESET}")
+    print(f"{Stile.CIANO}5.{Stile.RESET} Fai la tua accusa (Risolvi il caso)")
+    print(f"{Stile.CIANO}6.{Stile.RESET} Esci dal gioco")
+    return input(f"\n{Stile.GRASSETTO}Scelta (1-6): {Stile.RESET}")
 
 def gioca():
     print(f"\n{Stile.VERDE}{Stile.GRASSETTO}=== DATABASE INVESTIGATIVO INIZIALIZZATO ==={Stile.RESET}")
@@ -174,7 +204,7 @@ def gioca():
    
     print(f"\nÈ stato assegnato un nuovo caso: {Stile.GIALLO}{Stile.GRASSETTO}{caso_attuale['titolo']}{Stile.RESET}")
    
-    ore_rimaste = 14
+    ore_rimaste = 15
     risolto = False
 
     while not risolto:
@@ -227,7 +257,7 @@ def gioca():
                             print(f"\n{Stile.GIALLO}[{sospettato_attuale}]:{Stile.RESET} \"{dialoghi[scelta_domanda]['risposta']}\"")
                            
                             if ore_rimaste <= 0:
-                                stampa_errore("Il tuo tempo è terminato nel bel mezzo dell'interrogatorio!")
+                                stampa_errore("Il tempo è terminato nel bel mezzo dell'interrogatorio!")
                                 break
                         else:
                             print(f"{Stile.ROSSO}Scelta non valida.{Stile.RESET}")
@@ -240,32 +270,88 @@ def gioca():
             for nome_prova, info in caso_attuale["prove"].items():
                 print(f"\n{Stile.VIOLA}{Stile.GRASSETTO}Prova: {nome_prova}{Stile.RESET}")
                
-                # --- SISTEMA DI DECRITTAZIONE ---
                 if info.get("cifrato"):
                     if not info.get("decifrato"):
                         print(f" {Stile.GRASSETTO}- Luogo:{Stile.RESET} {info['luogo_ritrovamento']}")
                         print(f" {Stile.GIALLO}- Enigma:{Stile.RESET} {info['descrizione']}")
-                        print(f" {Stile.ROSSO}- Codice Segreto:{Stile.RESET} {info['testo_nascosto']}")
+                        print(f" {Stile.ROSSO}- Codice:{Stile.RESET} {info['testo_nascosto']}")
                        
-                        tentativo = input(f"\n{Stile.GRASSETTO}Inserisci la parola sblocco (o premi Invio per rinunciare) [-1 ora se sbagli]: {Stile.RESET}").lower().strip()
+                        tentativo = input(f"\n{Stile.GRASSETTO}Password (Invio per uscire) [-1 ora se sbagli]: {Stile.RESET}").lower().strip()
                        
                         if tentativo == info["parola_sblocco"]:
                             stampa_successo("Codice violato!")
                             info["decifrato"] = True
-                            print(f" {Stile.VERDE}- Messaggio Rivelato:{Stile.RESET} {info['descrizione_sbloccata']}")
+                            print(f" {Stile.VERDE}- Messaggio:{Stile.RESET} {info['descrizione_sbloccata']}")
                         elif tentativo != "":
-                            stampa_errore("Password errata. Ci hai riflettuto a lungo perdendo 1 ora preziosa.")
+                            stampa_errore("Password errata. Perdi 1 ora preziosa.")
                             ore_rimaste -= 1
                     else:
                         print(f" {Stile.GRASSETTO}- Luogo:{Stile.RESET} {info['luogo_ritrovamento']}")
-                        print(f" {Stile.VERDE}- Messaggio Decifrato:{Stile.RESET} {info['descrizione_sbloccata']}")
-               
-                # --- PROVA NORMALE ---
+                        print(f" {Stile.VERDE}- Messaggio:{Stile.RESET} {info['descrizione_sbloccata']}")
                 else:
                     for chiave, valore in info.items():
-                        print(f" {Stile.GRASSETTO}-{Stile.RESET} {chiave.replace('_', ' ').capitalize()}: {valore}")
+                        if chiave not in ["cifrato", "decifrato", "parola_sblocco", "testo_nascosto", "descrizione_sbloccata"]:
+                            print(f" {Stile.GRASSETTO}-{Stile.RESET} {chiave.replace('_', ' ').capitalize()}: {valore}")
 
         elif scelta == '4':
+            stampa_sottotitolo("LAVAGNA DELLE DEDUZIONI (CRAFTING)")
+            print("Scegli due elementi (Sospettati o Prove) per cercare un collegamento logico.")
+           
+            # Crea una lista unificata di tutti gli elementi disponibili
+            elementi_disponibili = list(caso_attuale["sospettati"].keys()) + list(caso_attuale["prove"].keys())
+           
+            for i, elemento in enumerate(elementi_disponibili):
+                print(f"{Stile.CIANO}{i+1}.{Stile.RESET} {elemento}")
+            print(f"{Stile.CIANO}0.{Stile.RESET} Annulla")
+           
+            scelta_1 = input(f"\n{Stile.GRASSETTO}Scegli il PRIMO elemento (numero): {Stile.RESET}")
+            if scelta_1 == '0': continue
+           
+            scelta_2 = input(f"{Stile.GRASSETTO}Scegli il SECONDO elemento (numero): {Stile.RESET}")
+            if scelta_2 == '0': continue
+           
+            if scelta_1.isdigit() and scelta_2.isdigit():
+                idx1, idx2 = int(scelta_1) - 1, int(scelta_2) - 1
+               
+                if (0 <= idx1 < len(elementi_disponibili)) and (0 <= idx2 < len(elementi_disponibili)):
+                    el1 = elementi_disponibili[idx1]
+                    el2 = elementi_disponibili[idx2]
+                   
+                    if el1 == el2:
+                        stampa_errore("Devi scegliere due elementi DIVERSI.")
+                        continue
+                       
+                    # Controlla se la coppia esiste nelle combinazioni previste per questo caso
+                    combinazione_trovata = False
+                    for chiave_comb, dati_comb in caso_attuale.get("combinazioni", {}).items():
+                        richiesti = dati_comb["elementi_richiesti"]
+                        if (el1 in richiesti) and (el2 in richiesti):
+                            combinazione_trovata = True
+                           
+                            if not dati_comb.get("sbloccato", False):
+                                ore_rimaste -= 1
+                                dati_comb["sbloccato"] = True
+                                stampa_successo("COLLEGAMENTO LOGICO EFFETTUATO!")
+                                print(f"{Stile.GIALLO}{dati_comb['scoperta']}{Stile.RESET}")
+                               
+                                # Aggiungiamo la deduzione come nuova "prova" fissa nel database
+                                caso_attuale["prove"][dati_comb["nome_nuova_prova"]] = {
+                                    "luogo_ritrovamento": "Lavagna Investigativa",
+                                    "descrizione": dati_comb["scoperta"]
+                                }
+                            else:
+                                print(f"\n{Stile.BLU}Hai già unito questi indizi in precedenza.{Stile.RESET}")
+                            break
+                   
+                    if not combinazione_trovata:
+                        ore_rimaste -= 1
+                        stampa_errore(f"Nessun collegamento logico evidente tra '{el1}' e '{el2}'. Hai perso 1 ora a pensarci su.")
+                else:
+                    print(f"{Stile.ROSSO}Numeri non validi.{Stile.RESET}")
+            else:
+                print(f"{Stile.ROSSO}Input non valido.{Stile.RESET}")
+
+        elif scelta == '5':
             stampa_sottotitolo("ACCUSA FINALE")
             print(f"{Stile.GIALLO}(Usa una sola parola per rispondere, es. il nome esatto o l'oggetto){Stile.RESET}")
            
@@ -286,7 +372,7 @@ def gioca():
                 print("L'accusa sbagliata ti ha fatto perdere 3 ore di tempo prezioso.")
                 ore_rimaste -= 3
 
-        elif scelta == '5':
+        elif scelta == '6':
             print(f"\n{Stile.BLU}Chiusura dell'indagine. Arrivederci!{Stile.RESET}")
             break
         else:
